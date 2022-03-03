@@ -2,8 +2,12 @@
 
 namespace App\Http\Controllers;
 
+
 use App\Models\Pesanans;
+use App\Models\Details;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
 
 class PesananController extends Controller
 {
@@ -15,8 +19,8 @@ class PesananController extends Controller
     public function index()
     {
         //
-        $user = Pesanans::all();
-        return response()->json(['data'=>$user]);
+        $pesanan = DB::table("tb_pesanan")->get();
+        return response()->json(["data" => $pesanan]); 
     }
 
     /**
@@ -28,15 +32,28 @@ class PesananController extends Controller
     public function store(Request $req)
     {
         //
+
+            $Id = Str::uuid();
+
             $user = new Pesanans();
+            $user->id = $Id;
             $user->user_id = $req->input('user_id');
             $user->nomeja = $req->input('nomeja');
-            $user->menu_id = $req->input('menu_id');
-            $user->jumlah = $req->input('jumlah');
             $user->total = $req->input('total');
-
+            
             $user->save();
-            return response()->json(['message'=>"Data Berhasil Dimasukkan"]);
+            
+            foreach ($req->input("menu") as $menu) {
+                $detail = new Details();    
+
+                $detail->pesanan_id = $Id;
+                $detail->jumlah = $menu["quantity"];
+                $detail->menu_id = $menu["id"];
+
+                $detail->save();
+            }
+
+            return response()->json(['type_menu'=>$req,  'message'=>"Data Berhasil Dimasukkan"]);
         
     }
 
@@ -88,8 +105,11 @@ class PesananController extends Controller
     {
         //
         $user = Pesanans::find($id);
+        $detail = Details::where("pesanan_id", $id);
+
         if($user){
             $user->delete();
+            $detail->delete();
             return response()->json(['message'=>"Data Berhasil Dihapus"]);
         }else{
             return response()->json(['message'=>"Data Tidak Ada"]);

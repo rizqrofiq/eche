@@ -9,7 +9,7 @@ class Pesanans extends Model
 {
     use HasFactory;
     protected $table="tb_pesanan";
-    protected $with= ["user","menu"];
+    protected $with= ["user"];
 
     public function user()
     {
@@ -19,5 +19,9 @@ class Pesanans extends Model
     public function menu()
     {
         return $this->belongsTO(Menus::class);
+    }
+
+    public function detail() {
+        return $this->hasMany(Details::class);
     }
 }

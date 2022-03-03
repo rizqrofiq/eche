@@ -5,11 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class details extends Model
+class Details extends Model
 {
     use HasFactory;
     protected $table="tb_detail";
-    protected $with=["user","menu"];
+    protected $with=["user","menu", "pesanan"];
 
     public function user()
     {
@@ -20,4 +20,8 @@ class details extends Model
     {
         return $this->belongsTo(Menus::class);
     }   
+
+    // public function pesanan() {
+    //     return $this->belongsTo(Pesanans::class);
+    // }
 }

@@ -44,11 +44,11 @@ class DetailController extends Controller
      * @param  \App\Models\Users  $users
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Request $req)
     {
         //
-        $user = details::find($id);
-        return response()->json(['data'=>$user]);
+        $detail = details::where("pesanan_id", $req->id)->get();
+        return response()->json(['data'=>$detail]);
     }
 
 
